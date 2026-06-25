@@ -86,4 +86,37 @@ class PhoneNumberNormalizer @Inject constructor() {
         if (raw.isEmpty()) return raw
         return raw.replace(Regex("[\\s\\-().]"), "")
     }
+
+    /** True if libphonenumber classifies the number as a fixed-line (landline). */
+    fun isLandline(normalized: String): Boolean {
+        if (normalized.isEmpty()) return false
+        return try {
+            val parsed = util.parse(normalized, defaultRegion())
+            util.getNumberType(parsed) == PhoneNumberUtil.PhoneNumberType.FIXED_LINE
+        } catch (_: NumberParseException) {
+            false
+        }
+    }
+
+    /**
+     * True if the number is a toll-free / freephone number — uses libphonenumber's
+     * official classification first, falls back to common prefix matching for
+     * cases libphonenumber doesn't recognise.
+     */
+    fun isTollFree(normalized: String): Boolean {
+        if (normalized.isEmpty()) return false
+        val byType = try {
+            val parsed = util.parse(normalized, defaultRegion())
+            util.getNumberType(parsed) == PhoneNumberUtil.PhoneNumberType.TOLL_FREE
+        } catch (_: NumberParseException) {
+            false
+        }
+        if (byType) return true
+        return listOf(
+            "+1800", "+1888", "+1877", "+1866", "+1855", "+1844", "+1833",
+            "+91180", "+911800",
+            "+44800", "+44808",
+            "+800",
+        ).any { normalized.startsWith(it) }
+    }
 }

@@ -33,8 +33,12 @@ import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.AdminPanelSettings
 import androidx.compose.material.icons.rounded.CallEnd
 import androidx.compose.material.icons.rounded.CalendarMonth
+import androidx.compose.material.icons.rounded.DoNotDisturbOn
+import androidx.compose.material.icons.rounded.Help
 import androidx.compose.material.icons.rounded.History
 import androidx.compose.material.icons.automirrored.rounded.Rule
+import androidx.compose.material.icons.rounded.Phone
+import androidx.compose.material.icons.rounded.PhoneCallback
 import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material.icons.rounded.Shield
 import androidx.compose.material.icons.rounded.Timer
@@ -42,6 +46,7 @@ import androidx.compose.material.icons.rounded.Today
 import androidx.compose.material.icons.rounded.ViewWeek
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.AssistChipDefaults
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -49,12 +54,15 @@ import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -119,6 +127,7 @@ fun DashboardScreen(
     ) { isDefaultScreener = ScreeningRoleManager.isHeld(context) }
 
     var showSafeModeSheet by remember { mutableStateOf(false) }
+    var showLockdownSheet by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
@@ -155,8 +164,13 @@ fun DashboardScreen(
                 .padding(horizontal = 16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
-            // Safe mode banner overrides protection card when active
-            if (state.safeModeExpiry > System.currentTimeMillis()) {
+            // Lockdown banner takes priority over safe-mode banner — they're mutually exclusive.
+            if (state.lockdownExpiry > System.currentTimeMillis()) {
+                LockdownBanner(
+                    expiry = state.lockdownExpiry,
+                    onCancel = vm::cancelLockdown,
+                )
+            } else if (state.safeModeExpiry > System.currentTimeMillis()) {
                 SafeModeBanner(
                     expiry = state.safeModeExpiry,
                     onCancel = vm::cancelSafeMode,
@@ -180,6 +194,18 @@ fun DashboardScreen(
                 PermissionsBanner(onGrant = { permLauncher.launch(needsPermissions.toTypedArray()) })
             }
 
+            QuickTogglesCard(
+                blockAllUnknown = state.blockAllUnknown,
+                blockLandline = state.blockLandline,
+                blockTollFree = state.blockTollFree,
+                lockdownActive = state.lockdownExpiry > System.currentTimeMillis(),
+                onBlockAllUnknown = vm::setBlockAllUnknown,
+                onBlockLandline = vm::setBlockLandline,
+                onBlockTollFree = vm::setBlockTollFree,
+                onLockdown = { showLockdownSheet = true },
+                onCancelLockdown = vm::cancelLockdown,
+            )
+
             StatsGrid(state, onOpenStatistics)
 
             QuickActions(
@@ -201,6 +227,16 @@ fun DashboardScreen(
             onStart = { minutes ->
                 vm.startSafeMode(minutes)
                 showSafeModeSheet = false
+            },
+        )
+    }
+
+    if (showLockdownSheet) {
+        LockdownDialog(
+            onDismiss = { showLockdownSheet = false },
+            onStart = { minutes ->
+                vm.startLockdown(minutes)
+                showLockdownSheet = false
             },
         )
     }
@@ -232,6 +268,202 @@ private fun SafeModeBanner(expiry: Long, onCancel: () -> Unit) {
             TextButton(onClick = onCancel) { Text("Cancel") }
         }
     }
+}
+
+@Composable
+private fun LockdownBanner(expiry: Long, onCancel: () -> Unit) {
+    val remainingMin = ((expiry - System.currentTimeMillis()) / 60_000L).coerceAtLeast(0).toInt()
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(20.dp),
+        colors = CardDefaults.cardColors(containerColor = StatusBlocked.copy(alpha = 0.15f)),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
+    ) {
+        Row(
+            modifier = Modifier.padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Icon(Icons.Rounded.DoNotDisturbOn, contentDescription = null, tint = StatusBlocked)
+            Spacer(Modifier.width(12.dp))
+            Column(modifier = Modifier.weight(1f)) {
+                Text("Blocking all calls", style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.SemiBold)
+                Text(
+                    "Every call is rejected for the next $remainingMin min · whitelist still allowed",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+            TextButton(onClick = onCancel) { Text("Stop") }
+        }
+    }
+}
+
+@Composable
+private fun QuickTogglesCard(
+    blockAllUnknown: Boolean,
+    blockLandline: Boolean,
+    blockTollFree: Boolean,
+    lockdownActive: Boolean,
+    onBlockAllUnknown: (Boolean) -> Unit,
+    onBlockLandline: (Boolean) -> Unit,
+    onBlockTollFree: (Boolean) -> Unit,
+    onLockdown: () -> Unit,
+    onCancelLockdown: () -> Unit,
+) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(20.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text("Quick toggles", style = MaterialTheme.typography.titleMedium)
+            Spacer(Modifier.height(4.dp))
+            Text(
+                "Saved contacts are never blocked by these toggles.",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            Spacer(Modifier.height(8.dp))
+
+            ToggleRow(
+                icon = Icons.Rounded.Help,
+                tint = StatusBlocked,
+                title = "Block all unknown calls",
+                subtitle = "Reject any number not in your contacts",
+                checked = blockAllUnknown,
+                onChange = onBlockAllUnknown,
+            )
+            ToggleRow(
+                icon = Icons.Rounded.Phone,
+                tint = StatusSilenced,
+                title = "Block landline calls",
+                subtitle = "Reject fixed-line numbers detected via carrier metadata",
+                checked = blockLandline,
+                onChange = onBlockLandline,
+            )
+            ToggleRow(
+                icon = Icons.Rounded.PhoneCallback,
+                tint = StatusPending,
+                title = "Block toll-free calls",
+                subtitle = "Reject 1-800, 1-888, 0-800, 1800-series and similar",
+                checked = blockTollFree,
+                onChange = onBlockTollFree,
+            )
+
+            Spacer(Modifier.height(4.dp))
+            if (lockdownActive) {
+                FilledTonalButton(
+                    onClick = onCancelLockdown,
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
+                    Icon(Icons.Rounded.DoNotDisturbOn, contentDescription = null)
+                    Spacer(Modifier.width(8.dp))
+                    Text("Stop blocking all calls")
+                }
+            } else {
+                FilledTonalButton(
+                    onClick = onLockdown,
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
+                    Icon(Icons.Rounded.DoNotDisturbOn, contentDescription = null)
+                    Spacer(Modifier.width(8.dp))
+                    Text("Block all calls for X minutes")
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun ToggleRow(
+    icon: ImageVector,
+    tint: Color,
+    title: String,
+    subtitle: String,
+    checked: Boolean,
+    onChange: (Boolean) -> Unit,
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Box(
+            modifier = Modifier
+                .size(36.dp)
+                .clip(CircleShape)
+                .background(tint.copy(alpha = 0.14f)),
+            contentAlignment = Alignment.Center,
+        ) {
+            Icon(icon, contentDescription = null, tint = tint, modifier = Modifier.size(20.dp))
+        }
+        Spacer(Modifier.width(12.dp))
+        Column(modifier = Modifier.weight(1f)) {
+            Text(title, style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.SemiBold)
+            Text(
+                subtitle,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+        Switch(checked = checked, onCheckedChange = onChange)
+    }
+}
+
+@Composable
+private fun LockdownDialog(onDismiss: () -> Unit, onStart: (Int) -> Unit) {
+    var custom by remember { mutableStateOf("60") }
+    androidx.compose.material3.AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("Block all calls for…") },
+        text = {
+            Column {
+                Text(
+                    "Every incoming call will be rejected. Emergency numbers and contacts on your " +
+                        "whitelist will still come through.",
+                )
+                Spacer(Modifier.height(12.dp))
+                Text("Pick a duration:", style = MaterialTheme.typography.labelLarge)
+                Spacer(Modifier.height(8.dp))
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    listOf(15, 30, 60, 120).forEach { mins ->
+                        AssistChip(
+                            onClick = { onStart(mins) },
+                            label = { Text("$mins min") },
+                            colors = AssistChipDefaults.assistChipColors(
+                                containerColor = MaterialTheme.colorScheme.primaryContainer,
+                            ),
+                        )
+                    }
+                }
+                Spacer(Modifier.height(12.dp))
+                OutlinedTextField(
+                    value = custom,
+                    onValueChange = { input -> custom = input.filter { it.isDigit() }.take(4) },
+                    label = { Text("Custom duration (1–1440 minutes)") },
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    modifier = Modifier.fillMaxWidth(),
+                )
+            }
+        },
+        confirmButton = {
+            Button(
+                onClick = {
+                    val mins = custom.toIntOrNull()?.coerceIn(1, 1440) ?: 60
+                    onStart(mins)
+                },
+                enabled = custom.toIntOrNull()?.let { it in 1..1440 } == true,
+            ) {
+                Text("Start")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) { Text("Cancel") }
+        },
+    )
 }
 
 @Composable

@@ -65,6 +65,25 @@ You're in the right place.
 
 ## Features
 
+### 🆕 One-tap quick toggles on the dashboard *(v1.0.5)*
+
+Four high-impact controls sit right on the home screen — no need to dig into Rules:
+
+| Toggle | What it does |
+|---|---|
+| **Block all unknown calls** | Reject every caller whose number isn't in your contacts |
+| **Block landline calls** | Reject fixed-line numbers (detected via libphonenumber metadata) |
+| **Block toll-free calls** | Reject 1-800, 1-888, 0800, 1800-series and similar marketing numbers |
+| **Block all calls for X minutes** | Lockdown mode — type any duration (1–1440 minutes); emergency + whitelist still get through |
+
+**Saved contacts are always exempt from the three blanket toggles.** Even if your doctor's office is on a landline and you've enabled "Block landline calls", their call still comes through because they're in your contacts.
+
+### 🛡️ Saved contacts are protected by default *(v1.0.5)*
+
+Pattern-based rules (Starts With, Ends With, Contains, Exact, Regex, Country, Area, Length, Toll-Free, Premium, Schedule) now **automatically skip saved contacts**. So a rule like *"Starts with +91 765"* will block spam from that prefix without ever blocking a friend whose number happens to start the same way.
+
+The exemption applies to pattern rules only. If you explicitly add a contact to the **blacklist**, they're still blocked — that's your deliberate choice. Rules that are *about* contacts ("Block known numbers", "Allow only contacts", "Block unknown numbers") continue to work as before, because their entire purpose is contact-aware behaviour.
+
 ### 🛡️ 24 blocking rule types — match exactly how you want
 
 | Category | Rule types |
@@ -199,13 +218,15 @@ AI Spam Call Blocker is built on Android's official [`CallScreeningService`](htt
 |---|---|---|
 | 1 | Emergency number | **Always allow** |
 | 2 | Whitelist match | **Always allow** |
-| 3 | Safe mode active | **Always allow** (timer-based bypass) |
-| 4 | Carrier-flagged spam (if toggle on) | **Block** |
-| 5 | Active temporary block | **Block** |
-| 6 | Blacklist match | **Block** |
-| 7 | User rule match | **Block** with rule's chosen action |
-| 8 | Repeated-call threshold exceeded | **Block** + create temp block |
-| 9 | None of the above | **Allow** |
+| 3 | Lockdown (Block-all-calls) active | **Block** (whitelist + emergency above still pass) |
+| 4 | Safe mode active | **Allow** (timer-based bypass) |
+| 5 | Carrier-flagged spam (if toggle on) | **Block** |
+| 6 | Active temporary block | **Block** |
+| 7 | Blacklist match | **Block** |
+| 8 | Dashboard quick toggles (saved contacts exempt) | **Block** if matched |
+| 9 | User rule match (saved contacts exempt for pattern rules) | **Block** with rule's chosen action |
+| 10 | Repeated-call threshold exceeded | **Block** + create temp block |
+| 11 | None of the above | **Allow** |
 
 ---
 
@@ -423,6 +444,10 @@ By default, all data is removed when you uninstall (Android's standard scoped-st
 ### Does it work on Samsung / Xiaomi / OnePlus / OPPO / Vivo?
 
 Yes — the app uses Android's standard CallScreeningService API which all major OEMs support. A few OEM dialers may need their built-in spam database turned on for the new **Carrier Spam Detection** feature to surface signals to Android. Aggressive battery managers on Xiaomi MIUI, Realme, Vivo, and OPPO sometimes kill background services — whitelist AI Spam Call Blocker in your device's Autostart / Battery saver settings if you notice calls slipping through.
+
+### Will a rule like "Starts with +91" accidentally block my friend whose number starts with +91?
+
+**No.** As of v1.0.5, pattern-based rules automatically skip everyone in your contacts. The rule only fires for unknown callers. If you ever do want to block a specific contact, add them to the **Blacklist** — that's an explicit action and overrides the contact protection.
 
 ### Can I block international country codes?
 

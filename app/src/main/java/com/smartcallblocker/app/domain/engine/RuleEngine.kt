@@ -48,21 +48,32 @@ class RuleEngine @Inject constructor(
         // 1. Emergency
         if (emergency.isEmergency(call.rawNumber)) return CallDecision.Allow
 
-        // 1b. Safe mode active → bypass everything
-        if (settings.safeModeActive()) return CallDecision.Allow
-
         val key = call.normalizedNumber
 
-        // 2. Whitelist overrides
+        // 2. Whitelist overrides everything else.
         if (key.isNotEmpty() && whitelistDao.contains(key)) return CallDecision.Allow
+
+        // 3. Lockdown — "Block all calls" mode. Beats safe mode if both ever coexist.
+        // Whitelist (above) and emergency (above) still get through, by design.
+        if (settings.lockdownActive()) {
+            return CallDecision.Block(
+                action = BlockAction.REJECT,
+                reason = "Block all calls is active",
+                matchedRuleName = "Lockdown",
+                matchedRuleType = "LOCKDOWN",
+                temporaryUntil = settings.lockdownExpirySnapshot(),
+            )
+        }
+
+        // 4. Safe mode — allow every non-emergency caller for a fixed window.
+        if (settings.safeModeActive()) return CallDecision.Allow
 
         // Record the event for repeated-call detection (before deciding)
         if (key.isNotEmpty()) {
             eventDao.insert(CallEventEntity(normalizedNumber = key, eventTime = call.timestamp))
         }
 
-        // 2b. Carrier-flagged spam (STIR/SHAKEN failure) — toggleable, off by default.
-        // Comes AFTER the whitelist so a trusted contact is never blocked by a verification quirk.
+        // 5. Carrier-flagged spam (STIR/SHAKEN failure) — toggleable, off by default.
         if (call.isCarrierFlaggedSpam && settings.blockCarrierSpamSnapshot()) {
             return CallDecision.Block(
                 action = BlockAction.REJECT,
@@ -72,7 +83,7 @@ class RuleEngine @Inject constructor(
             )
         }
 
-        // 3. Temporary block in effect?
+        // 6. Active temporary block?
         if (key.isNotEmpty()) {
             tempDao.expireOld(call.timestamp)
             val active = tempDao.findByNumber(key)
@@ -86,7 +97,7 @@ class RuleEngine @Inject constructor(
             }
         }
 
-        // 4. Blacklist
+        // 7. Blacklist — explicit user choice, applies even to contacts.
         if (key.isNotEmpty() && blacklistDao.contains(key)) {
             return CallDecision.Block(
                 action = settings.defaultActionSnapshot(),
@@ -96,12 +107,39 @@ class RuleEngine @Inject constructor(
             )
         }
 
-        // 5. User-defined rules
+        // 8. Dashboard quick toggles (exempt saved contacts).
+        if (!call.isKnownContact) {
+            if (settings.blockAllUnknownSnapshot() && !call.isPrivate && !call.isEmpty) {
+                return CallDecision.Block(
+                    action = BlockAction.REJECT,
+                    reason = "Unknown number (quick toggle)",
+                    matchedRuleName = "Block all unknown",
+                    matchedRuleType = "QUICK_UNKNOWN",
+                )
+            }
+            if (settings.blockLandlineSnapshot() && normalizer.isLandline(key)) {
+                return CallDecision.Block(
+                    action = BlockAction.REJECT,
+                    reason = "Landline caller (quick toggle)",
+                    matchedRuleName = "Block landline calls",
+                    matchedRuleType = "QUICK_LANDLINE",
+                )
+            }
+            if (settings.blockTollFreeSnapshot() && normalizer.isTollFree(key)) {
+                return CallDecision.Block(
+                    action = BlockAction.REJECT,
+                    reason = "Toll-free caller (quick toggle)",
+                    matchedRuleName = "Block toll-free calls",
+                    matchedRuleType = "QUICK_TOLLFREE",
+                )
+            }
+        }
+
+        // 9. User-defined rules
         val rules = ruleDao.enabledSnapshot()
         val nowCal = Calendar.getInstance().apply { timeInMillis = call.timestamp }
         val match = rules.firstOrNull { it.matches(call, nowCal) }
         if (match != null) {
-            // Allow-only-contacts is technically inverted: if rule matches and number is NOT a contact, block.
             return CallDecision.Block(
                 action = blockActionFor(match.action),
                 reason = match.ruleName,
@@ -157,6 +195,11 @@ class RuleEngine @Inject constructor(
 
         val type = RuleType.fromName(ruleType) ?: return false
         val n = call.normalizedNumber
+
+        // CONTACT EXEMPTION — saved contacts bypass pattern/heuristic rules.
+        // Rules that are EXPLICITLY about contacts (Known, Unknown, Allow-only-contacts)
+        // and the explicit caller-ID rules (Private, Empty) still apply.
+        if (call.isKnownContact && type in PATTERN_RULE_TYPES) return false
 
         return when (type) {
             RuleType.UNKNOWN_NUMBERS -> !call.isPrivate && !call.isEmpty && !call.isKnownContact
@@ -243,5 +286,34 @@ class RuleEngine @Inject constructor(
     private fun isPremiumPrefix(n: String): Boolean {
         if (n.isEmpty()) return false
         return listOf("+1900", "+1976").any { n.startsWith(it) }
+    }
+
+    companion object {
+        /**
+         * Rules whose match logic depends only on the number's digits / type /
+         * country — NOT on whether the caller is a contact. Saved contacts are
+         * implicitly exempt from these rules so a "Starts with +91" never blocks
+         * a friend whose number happens to start with +91.
+         *
+         * Explicit contact-aware rules (UNKNOWN_NUMBERS, KNOWN_NUMBERS,
+         * ALLOW_ONLY_CONTACTS) and caller-ID-shape rules (PRIVATE_NUMBERS,
+         * EMPTY_CALLER_ID) are deliberately NOT in this set — they're already
+         * decided by the contact / presentation status.
+         */
+        private val PATTERN_RULE_TYPES = setOf(
+            RuleType.STARTS_WITH,
+            RuleType.ENDS_WITH,
+            RuleType.CONTAINS,
+            RuleType.EXACT,
+            RuleType.LESS_THAN_DIGITS,
+            RuleType.GREATER_THAN_DIGITS,
+            RuleType.COUNTRY_CODE,
+            RuleType.AREA_CODE,
+            RuleType.TOLL_FREE,
+            RuleType.PREMIUM,
+            RuleType.REGEX,
+            RuleType.SPAM_SCORE,
+            RuleType.SCHEDULE,
+        )
     }
 }

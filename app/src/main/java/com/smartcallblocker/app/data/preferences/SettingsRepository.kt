@@ -45,6 +45,10 @@ class SettingsRepository @Inject constructor(
         val LAST_BACKUP_TIME = longPreferencesKey("last_backup_time")
         val LAST_BACKUP_STATUS = stringPreferencesKey("last_backup_status")
         val BLOCK_CARRIER_SPAM = booleanPreferencesKey("block_carrier_spam")
+        val BLOCK_ALL_UNKNOWN = booleanPreferencesKey("block_all_unknown")
+        val BLOCK_LANDLINE = booleanPreferencesKey("block_landline")
+        val BLOCK_TOLL_FREE = booleanPreferencesKey("block_toll_free")
+        val LOCKDOWN_EXPIRY = longPreferencesKey("lockdown_expiry")
     }
 
     val protectionEnabled: Flow<Boolean> = context.dataStore.data.map { it[Keys.PROTECTION_ENABLED] ?: true }
@@ -73,6 +77,10 @@ class SettingsRepository @Inject constructor(
     val lastBackupTime: Flow<Long> = context.dataStore.data.map { it[Keys.LAST_BACKUP_TIME] ?: 0L }
     val lastBackupStatus: Flow<String> = context.dataStore.data.map { it[Keys.LAST_BACKUP_STATUS] ?: "" }
     val blockCarrierSpam: Flow<Boolean> = context.dataStore.data.map { it[Keys.BLOCK_CARRIER_SPAM] ?: false }
+    val blockAllUnknown: Flow<Boolean> = context.dataStore.data.map { it[Keys.BLOCK_ALL_UNKNOWN] ?: false }
+    val blockLandline: Flow<Boolean> = context.dataStore.data.map { it[Keys.BLOCK_LANDLINE] ?: false }
+    val blockTollFree: Flow<Boolean> = context.dataStore.data.map { it[Keys.BLOCK_TOLL_FREE] ?: false }
+    val lockdownExpiry: Flow<Long> = context.dataStore.data.map { it[Keys.LOCKDOWN_EXPIRY] ?: 0L }
 
     suspend fun setProtectionEnabled(value: Boolean) =
         context.dataStore.edit { it[Keys.PROTECTION_ENABLED] = value }.let { Unit }
@@ -143,6 +151,27 @@ class SettingsRepository @Inject constructor(
     suspend fun setBlockCarrierSpam(value: Boolean) =
         context.dataStore.edit { it[Keys.BLOCK_CARRIER_SPAM] = value }.let { Unit }
 
+    suspend fun setBlockAllUnknown(value: Boolean) =
+        context.dataStore.edit { it[Keys.BLOCK_ALL_UNKNOWN] = value }.let { Unit }
+
+    suspend fun setBlockLandline(value: Boolean) =
+        context.dataStore.edit { it[Keys.BLOCK_LANDLINE] = value }.let { Unit }
+
+    suspend fun setBlockTollFree(value: Boolean) =
+        context.dataStore.edit { it[Keys.BLOCK_TOLL_FREE] = value }.let { Unit }
+
+    suspend fun setLockdownExpiry(value: Long) =
+        context.dataStore.edit { it[Keys.LOCKDOWN_EXPIRY] = value }.let { Unit }
+
+    suspend fun startLockdown(durationMinutes: Int) {
+        val expiry = System.currentTimeMillis() + durationMinutes * 60_000L
+        setLockdownExpiry(expiry)
+        // Lockdown wins over safe mode — they are opposite intents.
+        setSafeModeExpiry(0L)
+    }
+
+    suspend fun cancelLockdown() = setLockdownExpiry(0L)
+
     // ----- snapshot helpers for the rule engine -----
 
     suspend fun protectionEnabledSnapshot(): Boolean = protectionEnabled.first()
@@ -163,6 +192,11 @@ class SettingsRepository @Inject constructor(
     suspend fun autoBackupEnabledSnapshot(): Boolean = autoBackupEnabled.first()
     suspend fun lastBackupTimeSnapshot(): Long = lastBackupTime.first()
     suspend fun blockCarrierSpamSnapshot(): Boolean = blockCarrierSpam.first()
+    suspend fun blockAllUnknownSnapshot(): Boolean = blockAllUnknown.first()
+    suspend fun blockLandlineSnapshot(): Boolean = blockLandline.first()
+    suspend fun blockTollFreeSnapshot(): Boolean = blockTollFree.first()
+    suspend fun lockdownExpirySnapshot(): Long = lockdownExpiry.first()
+    suspend fun lockdownActive(): Boolean = lockdownExpirySnapshot() > System.currentTimeMillis()
 
     /** Exports current settings as a flat map for backup. */
     suspend fun exportForBackup(): Map<String, Any?> = mapOf(
@@ -181,6 +215,9 @@ class SettingsRepository @Inject constructor(
         "repeatedBlockMin" to repeatedBlockMin.first(),
         "autoBackupEnabled" to autoBackupEnabled.first(),
         "blockCarrierSpam" to blockCarrierSpam.first(),
+        "blockAllUnknown" to blockAllUnknown.first(),
+        "blockLandline" to blockLandline.first(),
+        "blockTollFree" to blockTollFree.first(),
     )
 
     /** Applies a settings map from backup (only known keys). */
@@ -205,5 +242,8 @@ class SettingsRepository @Inject constructor(
         (map["repeatedBlockMin"] as? Number)?.let { setRepeatedBlockMin(it.toInt()) }
         (map["autoBackupEnabled"] as? Boolean)?.let { setAutoBackupEnabled(it) }
         (map["blockCarrierSpam"] as? Boolean)?.let { setBlockCarrierSpam(it) }
+        (map["blockAllUnknown"] as? Boolean)?.let { setBlockAllUnknown(it) }
+        (map["blockLandline"] as? Boolean)?.let { setBlockLandline(it) }
+        (map["blockTollFree"] as? Boolean)?.let { setBlockTollFree(it) }
     }
 }

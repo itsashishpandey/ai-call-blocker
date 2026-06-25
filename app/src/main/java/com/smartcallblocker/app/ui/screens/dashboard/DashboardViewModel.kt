@@ -25,6 +25,11 @@ data class DashboardUiState(
     val activeRules: Int = 0,
     val lastBlocked: BlockedCallEntity? = null,
     val safeModeExpiry: Long = 0L,
+    // Quick toggles
+    val blockAllUnknown: Boolean = false,
+    val blockLandline: Boolean = false,
+    val blockTollFree: Boolean = false,
+    val lockdownExpiry: Long = 0L,
 )
 
 @HiltViewModel
@@ -47,6 +52,10 @@ class DashboardViewModel @Inject constructor(
         observe(ruleRepo.countEnabled()) { value -> _state.value = _state.value.copy(activeRules = value) }
         observe(blockedRepo.observeLatest()) { value -> _state.value = _state.value.copy(lastBlocked = value) }
         observe(settings.safeModeExpiry) { value -> _state.value = _state.value.copy(safeModeExpiry = value) }
+        observe(settings.blockAllUnknown) { value -> _state.value = _state.value.copy(blockAllUnknown = value) }
+        observe(settings.blockLandline) { value -> _state.value = _state.value.copy(blockLandline = value) }
+        observe(settings.blockTollFree) { value -> _state.value = _state.value.copy(blockTollFree = value) }
+        observe(settings.lockdownExpiry) { value -> _state.value = _state.value.copy(lockdownExpiry = value) }
     }
 
     private fun <T> observe(flow: kotlinx.coroutines.flow.Flow<T>, block: (T) -> Unit) {
@@ -64,6 +73,16 @@ class DashboardViewModel @Inject constructor(
     }
 
     fun cancelSafeMode() = viewModelScope.launch { settings.cancelSafeMode() }
+
+    fun setBlockAllUnknown(v: Boolean) = viewModelScope.launch { settings.setBlockAllUnknown(v) }
+    fun setBlockLandline(v: Boolean) = viewModelScope.launch { settings.setBlockLandline(v) }
+    fun setBlockTollFree(v: Boolean) = viewModelScope.launch { settings.setBlockTollFree(v) }
+
+    fun startLockdown(durationMinutes: Int) = viewModelScope.launch {
+        settings.startLockdown(durationMinutes.coerceIn(1, 1440))
+    }
+
+    fun cancelLockdown() = viewModelScope.launch { settings.cancelLockdown() }
 
     private fun startOfToday(): Long = Calendar.getInstance().apply {
         set(Calendar.HOUR_OF_DAY, 0); set(Calendar.MINUTE, 0)
