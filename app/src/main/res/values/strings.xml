@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Smart Call Blocker</string>
+    <string name="app_tagline">Intelligent Protection</string>
+
+    <!-- Navigation -->
+    <string name="nav_dashboard">Dashboard</string>
+    <string name="nav_blocked">Blocked</string>
+    <string name="nav_rules">Rules</string>
+    <string name="nav_whitelist">Whitelist</string>
+    <string name="nav_blacklist">Blacklist</string>
+    <string name="nav_settings">Settings</string>
+
+    <!-- Dashboard -->
+    <string name="protection_active">Protection Active</string>
+    <string name="protection_inactive">Protection Inactive</string>
+    <string name="set_as_default">Set as Default Screening App</string>
+    <string name="blocked_today">Blocked Today</string>
+    <string name="blocked_week">This Week</string>
+    <string name="blocked_month">This Month</string>
+    <string name="blocked_total">Total Blocked</string>
+    <string name="active_rules">Active Rules</string>
+    <string name="last_blocked">Last Blocked</string>
+    <string name="quick_actions">Quick Actions</string>
+    <string name="add_rule">Add Rule</string>
+    <string name="add_to_blacklist">Add to Blacklist</string>
+    <string name="add_to_whitelist">Add to Whitelist</string>
+    <string name="view_history">View History</string>
+
+    <!-- Permissions -->
+    <string name="permissions_required">Permissions Required</string>
+    <string name="permission_phone_state">Phone state — required to detect incoming calls</string>
+    <string name="permission_contacts">Contacts — required to allow known contacts</string>
+    <string name="permission_call_log">Call log — required for repeated-call detection</string>
+    <string name="permission_answer">Answer calls — required to reject blocked calls</string>
+    <string name="grant_permissions">Grant Permissions</string>
+    <string name="permissions_denied">Permissions denied. Some features may not work.</string>
+
+    <!-- Rules -->
+    <string name="rule_unknown_numbers">Block Unknown Numbers</string>
+    <string name="rule_private_numbers">Block Private Numbers</string>
+    <string name="rule_empty_caller">Block Empty Caller ID</string>
+    <string name="rule_starts_with">Starts With</string>
+    <string name="rule_ends_with">Ends With</string>
+    <string name="rule_contains">Contains</string>
+    <string name="rule_exact">Exact Number</string>
+    <string name="rule_less_than">Less Than X Digits</string>
+    <string name="rule_greater_than">Greater Than X Digits</string>
+    <string name="rule_country_code">Country Code</string>
+    <string name="rule_area_code">Area Code</string>
+    <string name="rule_repeated_calls">Repeated Calls</string>
+    <string name="rule_schedule">Schedule</string>
+    <string name="rule_regex">Regex Pattern</string>
+    <string name="rule_spam_score">Spam Score</string>
+
+    <!-- Settings -->
+    <string name="setting_enable_protection">Enable Protection</string>
+    <string name="setting_action_type">Default Action</string>
+    <string name="setting_action_reject">Reject Call</string>
+    <string name="setting_action_silence">Silence Ringer</string>
+    <string name="setting_skip_notification">Skip Notification</string>
+    <string name="setting_skip_call_log">Skip Call Log</string>
+    <string name="setting_save_logs">Save Block Logs</string>
+    <string name="setting_app_lock">App Lock</string>
+    <string name="setting_dark_mode">Dark Mode</string>
+    <string name="setting_dark_system">Follow System</string>
+    <string name="setting_dark_light">Light</string>
+    <string name="setting_dark_dark">Dark</string>
+    <string name="setting_backup_export">Export Backup</string>
+    <string name="setting_backup_import">Import Backup</string>
+    <string name="setting_privacy_mode">Privacy Mode</string>
+    <string name="setting_auto_delete">Auto-Delete Old Logs</string>
+    <string name="setting_about">About</string>
+
+    <!-- Repeated calls -->
+    <string name="repeated_call_limit">Call Limit</string>
+    <string name="repeated_time_window">Time Window (minutes)</string>
+    <string name="repeated_block_duration">Block Duration (minutes)</string>
+
+    <!-- Actions -->
+    <string name="action_add">Add</string>
+    <string name="action_save">Save</string>
+    <string name="action_cancel">Cancel</string>
+    <string name="action_delete">Delete</string>
+    <string name="action_edit">Edit</string>
+    <string name="action_search">Search</string>
+    <string name="action_filter">Filter</string>
+    <string name="action_call_back">Call Back</string>
+    <string name="action_allow">Allow</string>
+    <string name="action_block">Block</string>
+    <string name="action_unblock">Unblock</string>
+
+    <!-- Empty states -->
+    <string name="empty_blocked">No blocked calls yet</string>
+    <string name="empty_blocked_desc">You\'re all set. Blocked calls will appear here.</string>
+    <string name="empty_rules">No rules yet</string>
+    <string name="empty_rules_desc">Tap + to create your first blocking rule.</string>
+    <string name="empty_whitelist">Whitelist is empty</string>
+    <string name="empty_whitelist_desc">Add trusted numbers that should always get through.</string>
+    <string name="empty_blacklist">Blacklist is empty</string>
+    <string name="empty_blacklist_desc">Add numbers you never want to hear from again.</string>
+
+    <!-- Reasons -->
+    <string name="reason_unknown">Unknown number</string>
+    <string name="reason_private">Private/hidden number</string>
+    <string name="reason_blacklist">In blacklist</string>
+    <string name="reason_repeated">Too many calls in short window</string>
+    <string name="reason_pattern_prefix">Matched blocked prefix</string>
+    <string name="reason_pattern_suffix">Matched blocked suffix</string>
+    <string name="reason_pattern_contains">Matched blocked pattern</string>
+    <string name="reason_country">Blocked country code</string>
+    <string name="reason_temporary">Temporary block in effect</string>
+
+    <!-- Widget -->
+    <string name="widget_description">Live shield with today\'s blocked-call count</string>
+</resources>

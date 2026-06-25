@@ -1,0 +1,35 @@
+# Build outputs
+**/build/
+*.apk
+*.aab
+
+# Android Studio / IntelliJ
+*.iml
+.idea/
+.gradle
+local.properties
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Native build cache
+.externalNativeBuild
+.cxx
+
+# Captures / profiling
+/captures
+
+# Generated key material - NEVER COMMIT
+keystore.properties
+keystore/
+*.keystore
+*.jks
+
+# Logs / temp
+*.log
+*.tmp
+*.swp
+
+# Compiled Java
+play_assets/*.class

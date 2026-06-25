@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Brand: Trust Shield palette -->
+    <color name="brand_primary">#1E40AF</color>
+    <color name="brand_primary_dark">#1E3A8A</color>
+    <color name="brand_accent">#3B82F6</color>
+    <color name="brand_success">#10B981</color>
+    <color name="brand_danger">#EF4444</color>
+    <color name="brand_warning">#F59E0B</color>
+
+    <!-- Splash background gradient anchors -->
+    <color name="splash_bg_top">#1E3A8A</color>
+    <color name="splash_bg_bottom">#3B82F6</color>
+    <color name="splash_icon_tint">#FFFFFF</color>
+
+    <!-- Status bar -->
+    <color name="status_bar_light">#1E40AF</color>
+    <color name="status_bar_dark">#0F172A</color>
+
+    <color name="white">#FFFFFFFF</color>
+    <color name="black">#FF000000</color>
+</resources>
