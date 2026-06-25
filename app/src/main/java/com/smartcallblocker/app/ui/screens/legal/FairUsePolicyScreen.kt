@@ -39,7 +39,7 @@ fun FairUsePolicyScreen(onBack: () -> Unit) {
             LegalEffectiveDate(Publisher.EFFECTIVE_DATE)
 
             LegalParagraph(
-                "Welcome to Smart Call Blocker. This Fair Use Policy describes how the App may be used " +
+                "Welcome to AI Spam Call Blocker. This Fair Use Policy describes how the App may be used " +
                     "and the terms that govern your use. By installing or continuing to use the App, you " +
                     "agree to these terms."
             )

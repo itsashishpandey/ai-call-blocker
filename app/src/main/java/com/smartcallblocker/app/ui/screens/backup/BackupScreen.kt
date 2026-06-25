@@ -362,7 +362,7 @@ private fun RestoreConfirmDialog(
         text = {
             Column {
                 Text(
-                    "We found a Smart Call Blocker backup in this folder. Do you want to " +
+                    "We found an AI Spam Call Blocker backup in this folder. Do you want to " +
                         "restore it now? This will replace all current rules, blacklist, " +
                         "whitelist, blocked-call history and settings with the backup.",
                 )

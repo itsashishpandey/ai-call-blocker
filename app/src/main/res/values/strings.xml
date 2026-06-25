@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Smart Call Blocker</string>
+    <string name="app_name">AI Spam Call Blocker</string>
     <string name="app_tagline">Intelligent Protection</string>
 
     <!-- Navigation -->

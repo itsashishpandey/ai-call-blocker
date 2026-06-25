@@ -357,7 +357,7 @@ private fun CarrierSpamDisclaimer() {
                     )
                     Spacer(Modifier.height(6.dp))
                     Text(
-                        "Smart Call Blocker reads the verification signal Android exposes for each incoming call " +
+                        "AI Spam Call Blocker reads the verification signal Android exposes for each incoming call " +
                             "(STIR/SHAKEN). When your carrier marks a call as failed verification — the same signal " +
                             "that makes your dialer show \"Suspected Spam\" with a red banner — we'll reject it.",
                         style = MaterialTheme.typography.bodySmall,

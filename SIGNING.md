@@ -1,6 +1,6 @@
 # Signing & Release Build
 
-This document describes how Smart Call Blocker is signed and how to verify a release was built with the official key. **Passwords and the keystore itself are not stored in this repository** — see [Security Notes](#security-notes) at the bottom.
+This document describes how AI Spam Call Blocker is signed and how to verify a release was built with the official key. **Passwords and the keystore itself are not stored in this repository** — see [Security Notes](#security-notes) at the bottom.
 
 ---
 

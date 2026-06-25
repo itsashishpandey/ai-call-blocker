@@ -1,10 +1,10 @@
 <div align="center">
 
-<img src="play_assets/play_store_icon_512.png" alt="Smart Call Blocker icon" width="128" height="128" />
+<img src="play_assets/play_store_icon_512.png" alt="AI Spam Call Blocker icon" width="128" height="128" />
 
-# Smart Call Blocker
+# AI Spam Call Blocker
 
-### Intelligent, offline-first Android call blocker — block spam, scams, and robocalls without giving up your privacy
+### Intelligent, offline-first Android spam call blocker — block spam calls, robocalls, and scammers without giving up your privacy
 
 [![Latest Release](https://img.shields.io/github/v/release/itsashishpandey/ai-call-blocker?label=Latest%20release&color=1E40AF)](https://github.com/itsashishpandey/ai-call-blocker/releases/latest)
 [![Min SDK](https://img.shields.io/badge/Android-10%2B-3B82F6)](https://developer.android.com/about/versions/10)
@@ -25,9 +25,9 @@
 
 ---
 
-## Why Smart Call Blocker?
+## Why AI Spam Call Blocker?
 
-Spam calls, robocalls, scammers, and persistent telemarketers waste your time, drain your battery, and erode trust in every unknown number. Smart Call Blocker is a **free, open-source, ad-free Android call blocker** that silences every unwanted call while making sure the calls that matter — family, doctors, delivery, work — still get through.
+Spam calls, robocalls, scammers, and persistent telemarketers waste your time, drain your battery, and erode trust in every unknown number. AI Spam Call Blocker is a **free, open-source, ad-free Android call blocker** that silences every unwanted call while making sure the calls that matter — family, doctors, delivery, work — still get through.
 
 Built by [Triple Minds](https://tripleminds.co/) with **one strict rule: nothing leaves your device.** No tracking, no analytics, no third-party SDKs phoning home. Your call history, contacts, blacklist, and rules are processed locally and stay locally.
 
@@ -126,7 +126,7 @@ After reinstalling the app — even on a new device — point at the same folder
 
 ### 🚨 Emergency-safe by design
 
-Emergency numbers (911, 112, 100, 101, 108, 999, etc.) are always allowed, regardless of any rule you set. The app uses Android's `TelephonyManager.isEmergencyNumber()` API plus a hard-coded fallback list. **Smart Call Blocker cannot be used to block emergency services.**
+Emergency numbers (911, 112, 100, 101, 108, 999, etc.) are always allowed, regardless of any rule you set. The app uses Android's `TelephonyManager.isEmergencyNumber()` API plus a hard-coded fallback list. **AI Spam Call Blocker cannot be used to block emergency services.**
 
 ---
 
@@ -173,10 +173,10 @@ keytool -printcert -jarfile app-release.apk
 
 ## How it works
 
-Smart Call Blocker is built on Android's official [`CallScreeningService`](https://developer.android.com/reference/android/telecom/CallScreeningService) API — the same hook used by Google Phone and other major call-blocking apps.
+AI Spam Call Blocker is built on Android's official [`CallScreeningService`](https://developer.android.com/reference/android/telecom/CallScreeningService) API — the same hook used by Google Phone and other major call-blocking apps.
 
 ```
-1. User makes Smart Call Blocker the default screening app
+1. User makes AI Spam Call Blocker the default screening app
         ↓
 2. Phone rings → Android tells our CallScreeningService first, BEFORE the dialer
         ↓
@@ -226,7 +226,7 @@ These permissions are never used for advertising, profiling, marketing, analytic
 
 ## Privacy
 
-Smart Call Blocker is **offline-first**. Your data never leaves your device.
+AI Spam Call Blocker is **offline-first**. Your data never leaves your device.
 
 - ❌ No analytics
 - ❌ No advertising SDKs
@@ -406,7 +406,7 @@ To restore on a fresh install: **Settings → Backup & Restore → Pick backup f
 
 ### Will this app block Truecaller / Google Phone's own spam tags?
 
-Partially. Android only exposes a **standard verification signal** (STIR/SHAKEN) to third-party screening apps — not the proprietary spam databases that Truecaller, Google, Samsung, or Hiya maintain. With **Carrier Spam Detection** enabled (Settings → Carrier spam detection), Smart Call Blocker reads that standard signal and blocks any call your network marks as unverified. For best coverage, keep your dialer's own "Caller ID & spam protection" turned on alongside Smart Call Blocker. See [the in-app disclaimer](#screenshots) for full details.
+Partially. Android only exposes a **standard verification signal** (STIR/SHAKEN) to third-party screening apps — not the proprietary spam databases that Truecaller, Google, Samsung, or Hiya maintain. With **Carrier Spam Detection** enabled (Settings → Carrier spam detection), AI Spam Call Blocker reads that standard signal and blocks any call your network marks as unverified. For best coverage, keep your dialer's own "Caller ID & spam protection" turned on alongside AI Spam Call Blocker. See [the in-app disclaimer](#screenshots) for full details.
 
 ### Does it work without an internet connection?
 
@@ -422,7 +422,7 @@ By default, all data is removed when you uninstall (Android's standard scoped-st
 
 ### Does it work on Samsung / Xiaomi / OnePlus / OPPO / Vivo?
 
-Yes — the app uses Android's standard CallScreeningService API which all major OEMs support. A few OEM dialers may need their built-in spam database turned on for the new **Carrier Spam Detection** feature to surface signals to Android. Aggressive battery managers on Xiaomi MIUI, Realme, Vivo, and OPPO sometimes kill background services — whitelist Smart Call Blocker in your device's Autostart / Battery saver settings if you notice calls slipping through.
+Yes — the app uses Android's standard CallScreeningService API which all major OEMs support. A few OEM dialers may need their built-in spam database turned on for the new **Carrier Spam Detection** feature to surface signals to Android. Aggressive battery managers on Xiaomi MIUI, Realme, Vivo, and OPPO sometimes kill background services — whitelist AI Spam Call Blocker in your device's Autostart / Battery saver settings if you notice calls slipping through.
 
 ### Can I block international country codes?
 
@@ -475,7 +475,7 @@ You are free to fork, modify, and redistribute. If you publish a fork on Google 
 
 ## About
 
-**Smart Call Blocker** is built and maintained by **Triple Minds** — privacy-respecting mobile tools. Website: [tripleminds.co](https://tripleminds.co/). Contact: [support@tripleminds.co](mailto:support@tripleminds.co).
+**AI Spam Call Blocker** is built and maintained by **Triple Minds** — privacy-respecting mobile tools. Website: [tripleminds.co](https://tripleminds.co/). Contact: [support@tripleminds.co](mailto:support@tripleminds.co).
 
 Maintainer: [@itsashishpandey](https://github.com/itsashishpandey)
 
@@ -486,6 +486,6 @@ If this app saved you from a robocall, ⭐ the repo. If it didn't, [tell us why]
 <details>
 <summary>Keywords (helps people find this app)</summary>
 
-Android call blocker, Android spam blocker, free call blocker app, open source call blocker, offline call blocker, privacy-first call blocker, block robocalls Android, block telemarketers Android, block spam calls, block unknown numbers Android, default call screening app, STIR SHAKEN call blocker, Samsung call blocker, Pixel call blocker, OnePlus call blocker, Xiaomi call blocker, regex call blocker, prefix call blocker, country code call blocker, scheduled call blocker, Kotlin call blocker app, Jetpack Compose call blocker, Material 3 Android app, CallScreeningService example, Triple Minds.
+AI spam call blocker, Android spam call blocker, AI call blocker app Android, free spam call blocker, open source spam call blocker, offline spam call blocker, privacy-first spam call blocker, block robocalls Android, block telemarketers Android, block spam calls Android, block unknown numbers Android, default call screening app, STIR SHAKEN spam blocker, Samsung spam call blocker, Pixel spam call blocker, OnePlus spam call blocker, Xiaomi spam call blocker, OPPO Vivo Realme spam call blocker, regex call blocker, prefix call blocker, country code call blocker, scheduled call blocker, Kotlin spam call blocker app, Jetpack Compose Android app, Material 3 Android app, CallScreeningService example, AI Spam Call Blocker by Triple Minds.
 
 </details>

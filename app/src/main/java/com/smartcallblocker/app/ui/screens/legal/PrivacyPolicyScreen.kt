@@ -31,7 +31,7 @@ fun PrivacyPolicyScreen(onBack: () -> Unit) {
                 .padding(horizontal = 20.dp, vertical = 16.dp),
         ) {
             Text(
-                text = "Smart Call Blocker Privacy Policy",
+                text = "AI Spam Call Blocker Privacy Policy",
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.Bold,
             )
@@ -40,13 +40,13 @@ fun PrivacyPolicyScreen(onBack: () -> Unit) {
 
             LegalParagraph(
                 "${Publisher.NAME} (\"we\", \"us\", \"our\") respects your privacy. This Privacy Policy " +
-                    "explains what information Smart Call Blocker (the \"App\") collects, how it is used, " +
+                    "explains what information AI Spam Call Blocker (the \"App\") collects, how it is used, " +
                     "and the choices you have. By installing or using the App, you agree to the terms below."
             )
 
             LegalHeading("1. Our privacy promise")
             LegalParagraph(
-                "Smart Call Blocker is designed to be offline-first. The App does not transmit your call " +
+                "AI Spam Call Blocker is designed to be offline-first. The App does not transmit your call " +
                     "history, contacts, blocked numbers, or any other personal data to our servers or any " +
                     "third party. Everything you create — rules, whitelist, blacklist, blocked history — " +
                     "stays on your device."

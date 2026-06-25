@@ -1,6 +1,6 @@
-# Contributing to Smart Call Blocker
+# Contributing to AI Spam Call Blocker
 
-Thanks for considering a contribution. Smart Call Blocker is built and maintained by [Triple Minds](https://tripleminds.co/) and we welcome bug reports, feature requests, and pull requests from the community.
+Thanks for considering a contribution. AI Spam Call Blocker is built and maintained by [Triple Minds](https://tripleminds.co/) and we welcome bug reports, feature requests, and pull requests from the community.
 
 ## Quick links
 

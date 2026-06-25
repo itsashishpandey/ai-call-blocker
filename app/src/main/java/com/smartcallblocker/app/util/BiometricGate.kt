@@ -20,7 +20,7 @@ object BiometricGate {
      */
     fun show(
         activity: FragmentActivity,
-        title: String = "Unlock Smart Call Blocker",
+        title: String = "Unlock AI Spam Call Blocker",
         subtitle: String = "Confirm it's you to continue",
         onSuccess: () -> Unit,
         onFailure: () -> Unit = {},

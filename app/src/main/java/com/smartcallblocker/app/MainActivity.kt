@@ -199,7 +199,7 @@ private fun LockOverlay(onUnlock: () -> Unit) {
             }
             Spacer(Modifier.height(20.dp))
             Text(
-                "Smart Call Blocker is locked",
+                "AI Spam Call Blocker is locked",
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.SemiBold,
             )

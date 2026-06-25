@@ -11,7 +11,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 
 /**
- * Generates the 512x512 Play Store icon for Smart Call Blocker.
+ * Generates the 512x512 Play Store icon for AI Spam Call Blocker.
  * Mirrors the in-app adaptive launcher icon: gradient bg + white shield
  * + inner blue shield + white phone handset + red "block" dot.
  */

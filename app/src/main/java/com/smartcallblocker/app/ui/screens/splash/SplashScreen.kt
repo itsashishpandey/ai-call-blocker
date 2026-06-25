@@ -140,7 +140,7 @@ fun SplashScreen(onFinished: () -> Unit) {
             }
             Spacer(Modifier.height(28.dp))
             Text(
-                text = "Smart Call Blocker",
+                text = "AI Spam Call Blocker",
                 color = Color.White,
                 fontSize = 26.sp,
                 fontWeight = FontWeight.Bold,

@@ -68,7 +68,7 @@ private data class OnboardingPage(
 private val pages = listOf(
     OnboardingPage(
         Icons.Rounded.Shield,
-        "Welcome to Smart Call Blocker",
+        "Welcome to AI Spam Call Blocker",
         "Take back control of your phone. Block spam, scams, and repeated harassment calls — while important calls still get through.",
     ),
     OnboardingPage(
@@ -79,7 +79,7 @@ private val pages = listOf(
     OnboardingPage(
         Icons.Rounded.AdminPanelSettings,
         "Become the default screening app",
-        "Android requires one screening app at a time. Set Smart Call Blocker as default to enable blocking. You can change this any time from system settings.",
+        "Android requires one screening app at a time. Set AI Spam Call Blocker as default to enable blocking. You can change this any time from system settings.",
     ),
     OnboardingPage(
         Icons.Rounded.CheckCircle,

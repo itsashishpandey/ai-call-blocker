@@ -86,7 +86,7 @@ fun AboutScreen(onBack: () -> Unit) {
                     }
                     Spacer(Modifier.height(12.dp))
                     Text(
-                        text = "Smart Call Blocker",
+                        text = "AI Spam Call Blocker",
                         style = MaterialTheme.typography.headlineSmall,
                         fontWeight = FontWeight.Bold,
                     )
@@ -106,7 +106,7 @@ fun AboutScreen(onBack: () -> Unit) {
 
             LegalHeading("Our mission")
             LegalParagraph(
-                "Smart Call Blocker exists to give people back control of their phones. " +
+                "AI Spam Call Blocker exists to give people back control of their phones. " +
                     "Spam, scams, and repeated harassment calls are an everyday nuisance that wastes time " +
                     "and erodes trust in incoming calls. We believe blocking should be powerful, transparent, " +
                     "and respect your privacy — all without you having to be a power user."
@@ -128,7 +128,7 @@ fun AboutScreen(onBack: () -> Unit) {
 
             LegalHeading("About ${Publisher.NAME}")
             LegalParagraph(
-                "${Publisher.NAME} builds privacy-respecting mobile tools. Smart Call Blocker is one of our " +
+                "${Publisher.NAME} builds privacy-respecting mobile tools. AI Spam Call Blocker is one of our " +
                     "flagship apps, designed to be uncompromising on user privacy and uncompromisingly powerful " +
                     "for everyday call hygiene."
             )
@@ -199,7 +199,7 @@ private fun openEmail(ctx: android.content.Context, email: String) {
     runCatching {
         ctx.startActivity(
             Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:$email")).apply {
-                putExtra(Intent.EXTRA_SUBJECT, "Smart Call Blocker support")
+                putExtra(Intent.EXTRA_SUBJECT, "AI Spam Call Blocker support")
             },
         )
     }

@@ -26,8 +26,8 @@ android {
         // Kotlin package name used for R / BuildConfig and is independent of the Play Store ID.
         minSdk = 29
         targetSdk = 35
-        versionCode = 4
-        versionName = "1.0.3"
+        versionCode = 5
+        versionName = "1.0.4"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
