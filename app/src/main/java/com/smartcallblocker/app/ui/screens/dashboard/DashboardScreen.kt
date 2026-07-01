@@ -3,11 +3,14 @@ package com.smartcallblocker.app.ui.screens.dashboard
 import android.Manifest
 import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -35,6 +38,8 @@ import androidx.compose.material.icons.rounded.CallEnd
 import androidx.compose.material.icons.rounded.CalendarMonth
 import androidx.compose.material.icons.rounded.DoNotDisturbOn
 import androidx.compose.material.icons.rounded.Help
+import androidx.compose.material.icons.rounded.OpenInNew
+import androidx.compose.material.icons.rounded.Lightbulb
 import androidx.compose.material.icons.rounded.History
 import androidx.compose.material.icons.automirrored.rounded.Rule
 import androidx.compose.material.icons.rounded.Phone
@@ -216,6 +221,8 @@ fun DashboardScreen(
             )
 
             LastBlockedCard(state.lastBlocked, state.privacyMode, onOpenHistory = onOpenBlocked)
+
+            FeatureRequestCard(onClick = { openFeatureRequestForm(context) })
 
             Spacer(Modifier.height(16.dp))
         }
@@ -803,6 +810,69 @@ private fun LastBlockedCard(call: BlockedCallEntity?, privacyMode: Boolean, onOp
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun FeatureRequestCard(onClick: () -> Unit) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick),
+        shape = RoundedCornerShape(20.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+        ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
+    ) {
+        Row(
+            modifier = Modifier.padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(44.dp)
+                    .clip(CircleShape)
+                    .background(MaterialTheme.colorScheme.tertiary),
+                contentAlignment = Alignment.Center,
+            ) {
+                Icon(
+                    Icons.Rounded.Lightbulb,
+                    contentDescription = null,
+                    tint = Color.White,
+                    modifier = Modifier.size(24.dp),
+                )
+            }
+            Spacer(Modifier.width(14.dp))
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    "Tell us the feature you need",
+                    style = MaterialTheme.typography.titleSmall,
+                    fontWeight = FontWeight.SemiBold,
+                )
+                Text(
+                    "We'll add it within 9 hours ⚡",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+            Icon(
+                Icons.Rounded.OpenInNew,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.tertiary,
+            )
+        }
+    }
+}
+
+private const val FEATURE_REQUEST_FORM_URL = "https://forms.gle/Szy2aB4NCHELbsob6"
+
+private fun openFeatureRequestForm(context: Context) {
+    runCatching {
+        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(FEATURE_REQUEST_FORM_URL)).apply {
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
+        context.startActivity(intent)
     }
 }
 

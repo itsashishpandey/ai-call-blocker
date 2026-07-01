@@ -65,6 +65,10 @@ You're in the right place.
 
 ## Features
 
+### 💡 Feature-request shortcut *(v1.0.6)*
+
+A "**Tell us the feature you need — we'll add it within 9 hours ⚡**" card at the bottom of the dashboard opens our public Google Form in your device's default browser. Nothing is embedded in-app, no INTERNET permission on our side — we hand the URL off to Chrome/Firefox/Samsung Internet via a standard `ACTION_VIEW` intent and let it do the work.
+
 ### 🆕 One-tap quick toggles on the dashboard *(v1.0.5)*
 
 Four high-impact controls sit right on the home screen — no need to dig into Rules:
